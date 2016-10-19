@@ -24,6 +24,7 @@ object DirectKafkaConsumer {
       ssc, kafkaParams, topicsSet)
       //Todo do staff
      // Start the computation
+      messages.print()
       ssc.start()
       ssc.awaitTermination()
 
