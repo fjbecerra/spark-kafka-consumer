@@ -1,9 +1,10 @@
 package com.pakius
 
-import java.sql.{DriverManager}
+import java.sql.DriverManager
 
-import com.pakius.common.Common
+import com.pakius.helper.Common
 import com.typesafe.config.ConfigFactory
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -17,12 +18,17 @@ object RDBInitializer {
   val sc = new SparkContext(sparkConf)
   val sqlContext = new SQLContext(sc)
 
+  def splitLine(csv: RDD[String]):RDD[Array[String]] = {
+    csv.zipWithIndex  filter(_._2>0)  map(_._1.split("\t")  map(elem => elem.trim))
+  }
+
   def main(args: Array[String]){
 
     val csv = sc.textFile("file://"+args(0))
 
-    val data = csv.zipWithIndex  filter(_._2>0)  map(_._1.split("\t")  map(elem => elem.trim))
+    //val data = csv.zipWithIndex  filter(_._2>0)  map(_._1.split("\t")  map(elem => elem.trim))
 
+    val  data =  splitLine(csv)
     data.foreachPartition{
       it =>
         val conn= DriverManager.getConnection(prop.getString("rdb.url"),prop.getString("rdb.user"),prop.getString("rdb.password"))

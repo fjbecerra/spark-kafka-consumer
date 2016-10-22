@@ -52,11 +52,7 @@
             <artifactId>spark-sql_${scala.tools.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.databricks</groupId>
-            <artifactId>spark-csv_2.10</artifactId>
-            <version>1.5.0</version>
-        </dependency>
+
 
 
         <dependency>
@@ -74,6 +70,27 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>6.0.4</version>
         </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.tools.version}</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
 
 
     </dependencies>

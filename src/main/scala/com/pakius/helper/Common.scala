@@ -1,4 +1,4 @@
-package com.pakius.common
+package com.pakius.helper
 
 import java.util.Date
 
@@ -8,7 +8,7 @@ import java.util.Date
 object Common {
 
   def parseDateGivenString(str : String) : Date = {
-    val format = new java.text.SimpleDateFormat("dd-MM-yyyy")
+    val format = new java.text.SimpleDateFormat("MMM dd, yyyy")
     format.parse(str)
   }
 }
