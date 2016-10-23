@@ -14,15 +14,16 @@ import org.apache.spark.{SparkConf, SparkContext}
 object RDBInitializer {
 
   val prop = ConfigFactory.load
-  val sparkConf = new SparkConf().setAppName("DirectKafkaWordCount")
-  val sc = new SparkContext(sparkConf)
-  val sqlContext = new SQLContext(sc)
+
 
   def splitLine(csv: RDD[String]):RDD[Array[String]] = {
     csv.zipWithIndex  filter(_._2>0)  map(_._1.split("\t")  map(elem => elem.trim))
   }
 
   def main(args: Array[String]){
+    val sparkConf = new SparkConf().setAppName("DirectKafkaWordCount")
+    val sc = new SparkContext(sparkConf)
+    val sqlContext = new SQLContext(sc)
 
     val csv = sc.textFile("file://"+args(0))
 
