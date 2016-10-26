@@ -1,11 +1,13 @@
 package com.pakius
 
 import java.nio.file.Files
+import java.sql.PreparedStatement
 
 import org.apache.spark.{SparkContext, SparkConf}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.mockito.Mockito
+import org.scalatest.mockito.MockitoSugar
+
 import org.scalatest.{Matchers, GivenWhenThen, BeforeAndAfter, FlatSpec}
 
 
@@ -13,7 +15,7 @@ import org.scalatest.{Matchers, GivenWhenThen, BeforeAndAfter, FlatSpec}
   * Created by FBecer01 on 21/10/2016.
   */
 
-class RDBInizializerTest extends FlatSpec with BeforeAndAfter with GivenWhenThen with Matchers {
+class RDBInizializerTest extends FlatSpec with MockitoSugar with BeforeAndAfter with GivenWhenThen with Matchers {
 
   private val master = "local[2]"
   private val appName = "example-spark-streaming"
@@ -50,8 +52,43 @@ class RDBInizializerTest extends FlatSpec with BeforeAndAfter with GivenWhenThen
     res should equal(Array(
       "user_000001", "m", "", "Japan","Aug 13, 2006"))
   }
-  
+
   "split line" should "split and clean line" in {
+    Given("a line")
+    val lines = Array("#id\tgender\tage\tcountry\tregistered","user_000001\t\t\t")
+    When("line is split")
+    val res  =RDBInitializer.splitLine(sc.parallelize(lines)).first()
+    Then("line is")
+    res should equal(Array(
+      "user_000001"))
+  }
+
+  "map values" should "maps all value" in {
+    Given("aray of values")
+    val values = Array("user_000001", "m", "1", "Japan", "Aug 13, 2006")
+    When("mapping")
+    val ps = mock[PreparedStatement]
+    RDBInitializer.mapValuesAndExecute(values, ps)
+    Then("virify ")
+    Mockito.verify(ps, Mockito.times(1)).setString(1,"user_000001")
+    Mockito.verify(ps, Mockito.times(1)).setString(2,"m")
+    Mockito.verify(ps, Mockito.times(1)).setInt(3,1)
+    Mockito.verify(ps, Mockito.times(1)).setString(4,"Japan")
+
+
+  }
+
+  "map values only user id" should "maps only user id" in {
+    Given("aray of values")
+    val values = Array("user_000001")
+    When("mapping")
+    val ps = mock[PreparedStatement]
+    RDBInitializer.mapValuesAndExecute(values, ps)
+    Then("virify ")
+    Mockito.verify(ps, Mockito.times(1)).setString(1,"user_000001")
+    Mockito.verify(ps, Mockito.times(0)).setString(2,"")
+
+
 
   }
 

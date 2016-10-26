@@ -1,6 +1,6 @@
 package com.pakius
 
-import java.sql.DriverManager
+import java.sql.{PreparedStatement, CallableStatement, DriverManager}
 
 import com.pakius.helper.Common
 import com.typesafe.config.ConfigFactory
@@ -16,40 +16,39 @@ object RDBInitializer {
   val prop = ConfigFactory.load
 
 
-  def splitLine(csv: RDD[String]):RDD[Array[String]] = {
-    csv.zipWithIndex  filter(_._2>0)  map(_._1.split("\t")  map(elem => elem.trim))
+  def splitLine(csv: RDD[String]): RDD[Array[String]] = {
+    csv.zipWithIndex filter (_._2 > 0) map (_._1.split("\t") map (elem => elem.trim))
   }
 
-  def main(args: Array[String]){
+  def mapValuesAndExecute(values:Array[String], ps: PreparedStatement ): Unit = {
+    values match {
+      case user:Array[String] if user.length > 1 => {
+        ps.setString(1, user(0))
+        ps.setString(2, user(1))
+        ps.setInt(3, if (user(2).isEmpty) -1 else user(2).toInt)
+        ps.setString(4, user(3))
+        ps.setDate(5, if (user(4).isEmpty) null else new java.sql.Date(Common.parseDateGivenString(user(4)).getTime))
+      }
+      case _ => ps.setString(1, values(0))
+    }
+    ps.executeUpdate
+  }
+
+  def main(args: Array[String]) {
     val sparkConf = new SparkConf().setAppName("DirectKafkaWordCount")
     val sc = new SparkContext(sparkConf)
     val sqlContext = new SQLContext(sc)
-
-    val csv = sc.textFile("file://"+args(0))
-
-    //val data = csv.zipWithIndex  filter(_._2>0)  map(_._1.split("\t")  map(elem => elem.trim))
-
-    val  data =  splitLine(csv)
-    data.foreachPartition{
+    val csv = sc.textFile("file://" + args(0))
+    val data = splitLine(csv)
+    data.foreachPartition {
       it =>
-        val conn= DriverManager.getConnection(prop.getString("rdb.url"),prop.getString("rdb.user"),prop.getString("rdb.password"))
-        val del = conn.prepareStatement ("INSERT INTO DIM_USERS (ID, GENDER, AGE, COUNTRY, REGISTERED) VALUES (?,?,?,?,?)")
-        for (user <-it)
-        {
-          del.setString(1,user(0))
-          del.setString(2,user(1))
-          del.setInt(3,if(user(2).isEmpty) -1 else user(2).toInt)
-          del.setString(4,user(3))
-          del.setDate(5,if(user(4).isEmpty) null else new java.sql.Date(Common.parseDateGivenString(user(4)).getTime))
-          del.executeUpdate
+        val conn = DriverManager.getConnection(prop.getString("rdb.url"), prop.getString("rdb.user"), prop.getString("rdb.password"))
+        val del = conn.prepareStatement("INSERT INTO DIM_USERS (ID, GENDER, AGE, COUNTRY, REGISTERED) VALUES (?,?,?,?,?)")
+        for (user <- it) {
+          mapValuesAndExecute(user, del )
         }
-
     }
   }
-
-
-
-
 
 }
 
