@@ -15,11 +15,6 @@ object RDBInitializer {
 
   val prop = ConfigFactory.load
 
-
-  def splitLine(csv: RDD[String]): RDD[Array[String]] = {
-    csv.zipWithIndex filter (_._2 > 0) map (_._1.split("\t") map (elem => elem.trim))
-  }
-
   def mapValuesAndExecute(values:Array[String], ps: PreparedStatement ): Unit = {
     values match {
       case user:Array[String] if user.length > 1 => {
@@ -39,7 +34,7 @@ object RDBInitializer {
     val sc = new SparkContext(sparkConf)
     val sqlContext = new SQLContext(sc)
     val csv = sc.textFile("file://" + args(0))
-    val data = splitLine(csv)
+    val data = Common.splitLine(csv)
     data.foreachPartition {
       it =>
         val conn = DriverManager.getConnection(prop.getString("rdb.url"), prop.getString("rdb.user"), prop.getString("rdb.password"))
