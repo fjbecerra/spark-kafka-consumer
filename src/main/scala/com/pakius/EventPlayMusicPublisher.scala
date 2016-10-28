@@ -1,8 +1,10 @@
 package com.pakius
 
 
+import com.pakius.helper.Common
 import com.pakius.services.KafkaBroker
 import com.typesafe.config.ConfigFactory
+import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.io.{BufferedSource, Source}
 
@@ -18,19 +20,20 @@ object EventPlayMusicPublisher {
 
   val prop = ConfigFactory.load
 
-  def splitLines(playListFile: BufferedSource) : Vector[Vector[String]] = {
-    playListFile.getLines().map(_.split(",").toVector).toVector
-  }
 
   def main(args: Array[String]): Unit = {
 
-      val playListFile = Source.fromFile(args(0))
-      val plays = splitLines(playListFile)
-      playListFile.close
-      plays.foreach( str => KafkaBroker.sendMessage(prop.getString("topic"), str))
-      //TODO set up logging
-      System.out.println("Sent 50 Events to Kafka")
+    val sparkConf = new SparkConf().setAppName("DirectKafkaWordCount")
+    val sc = new SparkContext(sparkConf)
+    val csv = sc.textFile("file://" + args(0))
+    val data = Common.splitLine(csv)
+    data.foreachPartition {
+      it =>
+        it.foreach(str => KafkaBroker.sendMessage(prop.getString("topic"), str.toString ))
+
+    }
   }
+
 
 
 }

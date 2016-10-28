@@ -11,7 +11,7 @@ import org.apache.kafka.clients.producer.{ProducerRecord, KafkaProducer, Produce
  * Created by fbecer01 on 27/10/16.
  */
 trait BrokerService {
-  def sendMessage(topic:String, msg: Any)
+  def sendMessage(topic:String, msg: String)
 }
 
 case class KafkaService(brokers:String) extends BrokerService{
@@ -31,10 +31,10 @@ case class KafkaService(brokers:String) extends BrokerService{
       props
     }
 
-    val producer = new KafkaProducer[String, Any](setupBroker)
+    val producer = new KafkaProducer[String, String](setupBroker)
 
-    def sendMessage(topic:String, msg: Any) = {
-      val message = new ProducerRecord[String, Any](topic, null, msg)
+    def sendMessage(topic:String, msg: String) = {
+      val message = new ProducerRecord[String, String](topic, null, msg)
       producer.send(message)
     }
 }
@@ -45,7 +45,7 @@ object KafkaBroker {
 
   val kafka: BrokerService = new KafkaService(prop.getString("brokers"))
 
-  def sendMessage(topic:String, msg: Any) = {
+  def sendMessage(topic:String, msg: String) = {
     kafka.sendMessage(topic, msg)
   }
 }
