@@ -1,10 +1,10 @@
 package com.pakius.services
 
 
-import java.util
+import java.util.Properties
 
 import com.typesafe.config.ConfigFactory
-import org.apache.kafka.clients.producer.{ProducerRecord, KafkaProducer, ProducerConfig}
+import kafka.producer.{KeyedMessage, Producer, ProducerConfig}
 
 
 /**
@@ -16,27 +16,21 @@ trait BrokerService {
 
 case class KafkaService(brokers:String) extends BrokerService{
 
-    val setupBroker: util.HashMap[String, Object] ={
-      // Zookeeper connection properties
-      val props = new util.HashMap[String, Object]()
-      props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
-      props.put(
-        ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-        "org.apache.kafka.common.serialization.StringSerializer"
-      )
-      props.put(
-        ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-        "org.apache.kafka.common.serialization.StringSerializer"
-      )
-      props
-    }
+  val setupBroker: Properties={
+    // Zookeeper connection properties
+    val props = new Properties()
+    props.put("metadata.broker.list", brokers)
+    props.put("serializer.class","kafka.serializer.StringEncoder")
+    props
+  }
 
-    val producer = new KafkaProducer[String, String](setupBroker)
+  val config = new ProducerConfig(setupBroker)
+  val producer = new Producer[String, String](config)
 
-    def sendMessage(topic:String, msg: String) = {
-      val message = new ProducerRecord[String, String](topic, null, msg)
-      producer.send(message)
-    }
+  def sendMessage(topic:String, msg: String) = {
+    val message = new KeyedMessage[String, String](topic, null, msg)
+    producer.send(message)
+  }
 }
 
 object KafkaBroker {
@@ -49,3 +43,4 @@ object KafkaBroker {
     kafka.sendMessage(topic, msg)
   }
 }
+

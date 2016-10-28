@@ -29,7 +29,7 @@ object EventPlayMusicPublisher {
     val data = Common.splitLine(csv)
     data.foreachPartition {
       it =>
-        it.foreach(str => KafkaBroker.sendMessage(prop.getString("topic"), str.toString ))
+        it.foreach(str => KafkaBroker.sendMessage(prop.getString("topics"), str.toString ))
 
     }
   }
