@@ -12,7 +12,7 @@
 
 
 ###Spark:
-`$ docker run --name spark -it -p 8088:8088 -p 8042:8042 -h --link mysql --link kafka sandbox -v $HOME/sparkApp:/app  sequenceiq/spark:1.6.0 bash`
+`$ docker run --name spark -it -p 8088:8088 -p 8042:8042 -p 5005:5005  -h sandbox --link mysql --link kafka -v $HOME/sparkApp:/app  sequenceiq/spark:1.6.0 bash`
 
 
 - To Debug remotely:
