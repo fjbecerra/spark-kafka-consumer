@@ -24,6 +24,7 @@ https://hub.docker.com/r/sequenceiq/spark/
 `# export SPARK_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005`
 
 - Run Jobs:
+
 `$ docker exec -i -t spark bash`
 
 `# spark-submit --class com.pakius.RDBInitializer --master local[*] --driver-memory 1G --executor-memory 1G /app/spark-kafka-consumer-0.0.1-SNAPSHOT-jar-with-dependencies.jar /app/users.txt`
