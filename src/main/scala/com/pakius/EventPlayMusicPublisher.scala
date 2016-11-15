@@ -1,12 +1,12 @@
 package com.pakius
 
 
+
 import com.pakius.helper.Common
 import com.pakius.services.KafkaBroker
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.{SparkConf, SparkContext}
 
-import scala.io.{BufferedSource, Source}
 
 
 /**
@@ -20,7 +20,7 @@ object EventPlayMusicPublisher {
 
   val prop = ConfigFactory.load
 
-
+//Todo with flume
   def main(args: Array[String]): Unit = {
 
     val sparkConf = new SparkConf().setAppName("DirectKafkaWordCount")
@@ -29,8 +29,11 @@ object EventPlayMusicPublisher {
     val data = Common.splitLine(csv)
     data.foreachPartition {
       it =>
-        it.foreach(str => KafkaBroker.sendMessage(prop.getString("topics"), str.toString ))
-
+        it.foreach(
+          str => KafkaBroker.sendMessage(
+            prop.getString("topics"), AvroConverter.Event(str)
+          )
+        )
     }
   }
 

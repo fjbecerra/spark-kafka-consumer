@@ -1,0 +1,11 @@
+{"namespace": "com.pakius",
+  "type": "record",
+  "name": "Event",
+  "fields": [
+    {"name": "userId", "type": "string"},
+    {"name": "startPlay",  "type": "string"},
+    {"name": "trackId",  "type": "string"},
+    {"name": "author",  "type": "string"},
+    {"name": "trackName",  "type": "string"}
+  ]
+}
