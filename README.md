@@ -15,10 +15,14 @@
 `>docker run --name spark -it -p 8088:8088 -p 8042:8042 -h --link mysql --link kafka sandbox -v $HOME/sparkApp:/app  sequenceiq/spark:1.6.0 bash`
 
 
-* To Debug remotely.
+- To Debug remotely:
+
 `># export SPARK_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005`
 
- #####Run Jobs.
+- Run Jobs:
+
 `># spark-submit --class com.pakius.RDBInitializer --master local[*] --driver-memory 1G --executor-memory 1G /app/spark-kafka-consumer-0.0.1-SNAPSHOT-jar-with-dependencies.jar /app/users.txt`
+
 `># spark-submit --class com.pakius.EventPlayMusicPublisher --master local[*] --driver-memory 1G --executor-memory 1G /app/spark-kafka-consumer-0.0.1-SNAPSHOT-jar-with-dependencies.jar /app/xaa.txt`
+
 `># spark-submit --class com.pakius.DirectKafkaConsumer --master local[*] --driver-memory 1G --executor-memory 1G /app/spark-kafka-consumer-0.0.1-SNAPSHOT-jar-with-dependencies.jar`
