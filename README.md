@@ -7,13 +7,17 @@
            -e ADV_HOST=<ip docker machine> \
            landoop/fast-data-dev`
 
-###Mysql:
-`$ docker run --name my-container-name -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql/mysql-server:tag`
+https://github.com/Landoop/fast-data-dev
 
+###Mysql:
+`$ docker run --name mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql/mysql-server:tag`
+
+https://hub.docker.com/r/mysql/mysql-server/
 
 ###Spark:
 `$ docker run --name spark -it -p 8088:8088 -p 8042:8042 -p 5005:5005  -h sandbox --link mysql --link kafka -v $HOME/sparkApp:/app  sequenceiq/spark:1.6.0 bash`
 
+https://hub.docker.com/r/sequenceiq/spark/
 
 - To Debug remotely:
 
