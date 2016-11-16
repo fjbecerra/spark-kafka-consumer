@@ -3,7 +3,7 @@
   "name": "Event",
   "fields": [
     {"name": "userId", "type": "string"},
-    {"name": "startPlay",  "type": "string"},
+    {"name": "startPlay",  "type": "long"},
     {"name": "trackId",  "type": "string"},
     {"name": "author",  "type": "string"},
     {"name": "trackName",  "type": "string"}

@@ -3,12 +3,12 @@ package com.pakius
 import java.nio.file.Files
 import java.sql.PreparedStatement
 
-import org.apache.spark.{SparkContext, SparkConf}
+import com.pakius.helper.Common
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.mockito.Mockito
 import org.scalatest.mockito.MockitoSugar
-
-import org.scalatest.{Matchers, GivenWhenThen, BeforeAndAfter, FlatSpec}
+import org.scalatest.{BeforeAndAfter, FlatSpec, GivenWhenThen, Matchers}
 
 
 /**
@@ -47,7 +47,7 @@ class RDBInizializerTest extends FlatSpec with MockitoSugar with BeforeAndAfter 
     Given("a line")
     val lines = Array("#id\tgender\tage\tcountry\tregistered","user_000001\tm\t\tJapan\tAug 13, 2006")
     When("line is split")
-    val res  =RDBInitializer.splitLine(sc.parallelize(lines)).first()
+    val res  =Common.splitLine(sc.parallelize(lines)).first()
     Then("line is")
     res should equal(Array(
       "user_000001", "m", "", "Japan","Aug 13, 2006"))
@@ -57,7 +57,7 @@ class RDBInizializerTest extends FlatSpec with MockitoSugar with BeforeAndAfter 
     Given("a line")
     val lines = Array("#id\tgender\tage\tcountry\tregistered","user_000001\t\t\t")
     When("line is split")
-    val res  =RDBInitializer.splitLine(sc.parallelize(lines)).first()
+    val res  =Common.splitLine(sc.parallelize(lines)).first()
     Then("line is")
     res should equal(Array(
       "user_000001"))

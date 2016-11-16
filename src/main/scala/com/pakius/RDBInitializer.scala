@@ -30,7 +30,7 @@ object RDBInitializer {
   }
 
   def main(args: Array[String]) {
-    val sparkConf = new SparkConf().setAppName("DirectKafkaWordCount")
+    val sparkConf = new SparkConf().setAppName("RDBInitializer")
     val sc = new SparkContext(sparkConf)
     val csv = sc.textFile("file://" + args(0))
     val data = Common.splitLine(csv)

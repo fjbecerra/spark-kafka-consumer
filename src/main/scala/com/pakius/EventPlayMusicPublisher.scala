@@ -23,7 +23,7 @@ object EventPlayMusicPublisher {
 //Todo with flume
   def main(args: Array[String]): Unit = {
 
-    val sparkConf = new SparkConf().setAppName("DirectKafkaWordCount")
+    val sparkConf = new SparkConf().setAppName("EventPlayMusicPublisher")
     val sc = new SparkContext(sparkConf)
     val csv = sc.textFile("file://" + args(0))
     val data = Common.splitLine(csv)

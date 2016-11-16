@@ -7,7 +7,8 @@ import org.apache.avro.generic.{GenericRecord, IndexedRecord}
   */
 object AvroConverter{
 
-  def Event(line : Array[String]) = {
-    new Event(line(0), line(1), line(2), line(3), line(4))
+  def Event(line : Array[String]) :Event = {
+    //Todo convert date to long
+    new Event(line(0), line(1).toLong, line(2), line(3), line(4))
   }
 }
