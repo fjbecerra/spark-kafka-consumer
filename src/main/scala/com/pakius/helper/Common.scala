@@ -9,8 +9,8 @@ import org.apache.spark.rdd.RDD
   */
 object Common {
 
-  def parseDateGivenString(str : String) : Date = {
-    val format = new java.text.SimpleDateFormat("MMM dd, yyyy")
+  def parseDateGivenString(str : String, pattern: String) : Date = {
+    val format = new java.text.SimpleDateFormat(pattern)
     format.parse(str)
   }
 

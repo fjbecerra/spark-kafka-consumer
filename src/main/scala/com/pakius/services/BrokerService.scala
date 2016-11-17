@@ -35,7 +35,7 @@ case class KafkaService(brokers:String, schemaRegistry: String) extends BrokerSe
 
   def sendMessage(topic:String, msg: Event) = {
   //  val message = new KeyedMessage[String, Event](topic,null, msg)
-    val message =  new ProducerRecord[String, Event](topic, msg.toString(), msg);
+    val message =  new ProducerRecord[String, Event](topic, null, msg);
     producer.send(message)
   }
 }

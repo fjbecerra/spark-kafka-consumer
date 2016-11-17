@@ -2,8 +2,10 @@ package com.pakius
 
 import com.typesafe.config.ConfigFactory
 import io.confluent.kafka.serializers.KafkaAvroDecoder
+import org.apache.avro.generic.GenericRecord
+import org.apache.avro.specific.SpecificData
 import org.apache.spark.SparkConf
-import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.spark.streaming.kafka.{KafkaUtils, OffsetRange}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 /**
@@ -26,20 +28,28 @@ object SessionConsumer {
       val ssc = new StreamingContext(sparkConf, Seconds(10))
       val topicsSet = prop.getString("topics").split(",").toSet
       val kafkaParams = Map[String, String](
+        "auto.offset.reset" -> "smallest",
         "metadata.broker.list" -> prop.getString("brokers"),
         "schema.registry.url" -> prop.getString("schemaRegistry"))
+
       val messages = KafkaUtils.createDirectStream[Object, Object, KafkaAvroDecoder, KafkaAvroDecoder](
       ssc, kafkaParams, topicsSet)
       //Todo do staff
      // Start the computation
-     /* messages.mapPartitions{
-        (iterator)=> {
-          val list = iterator.toList
-          list match {
-            case  head => head::
+      val lines = messages.map(_._2.asInstanceOf[GenericRecord]) map  ( SpecificData.get().deepCopy(Event.SCHEMA$, _).asInstanceOf[Event])
+
+      lines.foreachRDD{
+        rdd => rdd.foreachPartition{
+          iteration => {
+            val list = iteration.toList
+            val sessions = pack(list)
+            print(sessions)
+
           }
         }
-      }*/
+      }
+
+
     ssc.start()
     ssc.awaitTermination()
 
@@ -47,19 +57,13 @@ object SessionConsumer {
 
   }
 
-  def findSessions(list : List[(Object, Event)]) : List[(Object, Event)] = {
-    def findSessionAcc(list: List[(Object, Event)], acc: List[(Object, Event)]): List[(Object, Event)] = list match {
-
-      case Nil => Nil                                                               //prop.getLong("session.timeout")
-      case head :: tail => if ((head._2.getStartPlay - tail.head._2.getStartPlay) < 1000) {
-        findSessionAcc(tail, head :: acc)
-      } else {
-        findSessionAcc(tail, acc)
-      }
-
+  def pack(ls: List[Event]): List[List[Event]] = {
+    if (ls.isEmpty) List(List())
+    else {
+      val (packed, next) = ls span (x => (ls.head.getStartPlay - x.getStartPlay) < prop.getLong("session.timeout"))
+      if (next == Nil) List(packed)
+      else packed :: pack(next)
     }
-    findSessionAcc(list, Nil)
-
   }
 
 

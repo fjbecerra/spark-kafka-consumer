@@ -29,4 +29,4 @@ https://hub.docker.com/r/sequenceiq/spark/
 
 `# spark-submit --class com.pakius.EventPlayMusicPublisher --master local[*] --driver-memory 1G --executor-memory 1G /app/spark-kafka-consumer-0.0.1-SNAPSHOT-jar-with-dependencies.jar /app/xaa.txt`
 
-`# spark-submit --class com.pakius.DirectKafkaConsumer --master local[*] --driver-memory 1G --executor-memory 1G /app/spark-kafka-consumer-0.0.1-SNAPSHOT-jar-with-dependencies.jar`
+`# spark-submit --class com.pakius.SessionConsumer --master local[*] --driver-memory 1G --executor-memory 1G /app/spark-kafka-consumer-0.0.1-SNAPSHOT-jar-with-dependencies.jar`

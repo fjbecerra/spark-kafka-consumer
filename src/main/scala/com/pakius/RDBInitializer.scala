@@ -22,7 +22,7 @@ object RDBInitializer {
         ps.setString(2, user(1))
         ps.setInt(3, if (user(2).isEmpty) -1 else user(2).toInt)
         ps.setString(4, user(3))
-        ps.setDate(5, if (user(4).isEmpty) null else new java.sql.Date(Common.parseDateGivenString(user(4)).getTime))
+        ps.setDate(5, if (user(4).isEmpty) null else new java.sql.Date(Common.parseDateGivenString(user(4), "MMM dd, yyyy" ).getTime))
       }
       case _ => ps.setString(1, values(0))
     }

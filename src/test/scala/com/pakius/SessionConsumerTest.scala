@@ -9,13 +9,13 @@ import org.scalatest.junit.JUnitRunner
   */
 @RunWith(classOf[JUnitRunner])
 class SessionConsumerTest extends FunSuite{
-
+//Todo fix tests
   test("find session") {
-    val v1 = ("1", new Event("11", 35001l, "ss", "", ""))
-    val v2 = ("1", new Event("11", 35002l, "ss", "", ""))
-    val v3 = ("1", new Event("11", 35003l, "ss", "", ""))
+    val v1 = new Event("11", 35001l, "ss", "", "")
+    val v2 = new Event("11", 35002l, "ss", "", "")
+    val v3 = new Event("11", 35003l, "ss", "", "")
     val events = List(v1, v2, v3)
-    SessionConsumer.findSessions(events)
+    SessionConsumer.pack(events)
   }
 
 }
