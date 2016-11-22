@@ -14,7 +14,7 @@ import org.scalatest.{BeforeAndAfter, FlatSpec, GivenWhenThen, Matchers}
 /**
   * Created by FBecer01 on 21/10/2016.
   */
-
+//Todo fix tests
 class RDBInizializerTest extends FlatSpec with MockitoSugar with BeforeAndAfter with GivenWhenThen with Matchers {
 
   private val master = "local[2]"
@@ -68,7 +68,7 @@ class RDBInizializerTest extends FlatSpec with MockitoSugar with BeforeAndAfter 
     val values = Array("user_000001", "m", "1", "Japan", "Aug 13, 2006")
     When("mapping")
     val ps = mock[PreparedStatement]
-    RDBInitializer.mapValuesAndExecute(values, ps)
+    RDBInitializer.saveUser(values)
     Then("virify ")
     Mockito.verify(ps, Mockito.times(1)).setString(1,"user_000001")
     Mockito.verify(ps, Mockito.times(1)).setString(2,"m")
@@ -83,7 +83,7 @@ class RDBInizializerTest extends FlatSpec with MockitoSugar with BeforeAndAfter 
     val values = Array("user_000001")
     When("mapping")
     val ps = mock[PreparedStatement]
-    RDBInitializer.mapValuesAndExecute(values, ps)
+    RDBInitializer.saveUser(values)
     Then("virify ")
     Mockito.verify(ps, Mockito.times(1)).setString(1,"user_000001")
     Mockito.verify(ps, Mockito.times(0)).setString(2,"")

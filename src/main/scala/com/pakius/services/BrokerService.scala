@@ -40,14 +40,4 @@ case class KafkaService(brokers:String, schemaRegistry: String) extends BrokerSe
   }
 }
 
-object KafkaBroker {
-
-  val prop = ConfigFactory.load
-
-  val kafka: BrokerService = new KafkaService(prop.getString("brokers"), prop.getString("schemaRegistry"))
-
-  def sendMessage(topic:String, msg: Event) = {
-    kafka.sendMessage(topic, msg)
-  }
-}
 

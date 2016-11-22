@@ -3,7 +3,7 @@ package com.pakius
 
 
 import com.pakius.helper.Common
-import com.pakius.services.KafkaBroker
+import com.pakius.services.{BrokerService, KafkaBroker, KafkaService}
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -20,7 +20,8 @@ object EventPlayMusicPublisher {
 
   val prop = ConfigFactory.load
 
-//Todo with flume
+  val kafka: BrokerService = new KafkaService(prop.getString("brokers"), prop.getString("schemaRegistry"))
+
   def main(args: Array[String]): Unit = {
 
     val sparkConf = new SparkConf().setAppName("EventPlayMusicPublisher")
@@ -30,7 +31,7 @@ object EventPlayMusicPublisher {
     data.foreachPartition {
       it =>
         it.foreach(
-          str => KafkaBroker.sendMessage(
+          str => kafka.sendMessage(
             prop.getString("topics"), AvroConverter.Event(str)
           )
         )
